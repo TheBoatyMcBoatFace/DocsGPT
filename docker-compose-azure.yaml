@@ -19,6 +19,11 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - MONGO_URI=mongodb://mongo:27017/docsgpt
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - AZURE_OPENAI_API_BASE=$AZURE_OPENAI_API_BASE
+      - AZURE_OPENAI_API_VERSION=$AZURE_OPENAI_API_VERSION
+      - AZURE_DEPLOYMENT_NAME=$AZURE_DEPLOYMENT_NAME
+      - AZURE_EMBEDDINGS_DEPLOYMENT_NAME=$AZURE_EMBEDDINGS_DEPLOYMENT_NAME
     ports:
       - "7091:7091"
     volumes:
@@ -26,8 +31,8 @@ services:
       - ./application/inputs:/app/inputs
       - ./application/vectors:/app/vectors
     depends_on:
-      - redis
-      - mongo
+        - redis
+        - mongo
 
   worker:
     build: ./application
@@ -39,9 +44,14 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - MONGO_URI=mongodb://mongo:27017/docsgpt
       - API_URL=http://backend:7091
+      - OPENAI_API_KEY=$OPENAI_API_KEY
+      - AZURE_OPENAI_API_BASE=$AZURE_OPENAI_API_BASE
+      - AZURE_OPENAI_API_VERSION=$AZURE_OPENAI_API_VERSION
+      - AZURE_DEPLOYMENT_NAME=$AZURE_DEPLOYMENT_NAME
+      - AZURE_EMBEDDINGS_DEPLOYMENT_NAME=$AZURE_EMBEDDINGS_DEPLOYMENT_NAME
     depends_on:
-      - redis
-      - mongo
+        - redis
+        - mongo
 
   redis:
     image: redis:6-alpine
@@ -54,6 +64,8 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
+
+
 
 volumes:
   mongodb_data_container:
